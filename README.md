@@ -58,7 +58,7 @@ The game is implemented using a `SnakeGame` class that encapsulates the entire g
    - `spawnFruit()`: Randomly places a new fruit ensuring it does not spawn inside the snake’s body.
    - `isGameOver()`: Returns whether the game has ended.
    - `PlayGameOverSound()`: Plays a beep sound when the game ends.
-   - `ShowGameOverScreen()`: Displays the game-over message and final score.
+   - `ShowGameOverScreen()`: Displays the game-over message and final score as well as the high score.
 
 ### 3. **Main Game Loop (`main()`)**
    - Creates an instance of `SnakeGame`.
@@ -70,6 +70,5 @@ The game is implemented using a `SnakeGame` class that encapsulates the entire g
 - **Pause Functionality**: Ability to pause and resume the game.
 - **Customizable Game Settings**: Change grid size and speed before starting.
 - **Cross-Platform Compatibility**: Replace `windows.h` dependencies for broader support.
-- **High Score Tracking**: Save and display the highest score achieved.
 - **Multiplayer Mode**: Introduce a two-player mode for added fun.
 - **Graphical Interface**: Replace console-based rendering with a GUI for better visuals.
