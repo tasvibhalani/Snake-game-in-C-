@@ -121,7 +121,7 @@ public:
         }
     
         // **Game Over condition: Snake touches any border**
-        if (x >= width || x < 0 || y >= height + 1 || y < 0 ) { 
+        if (x >= width || x < 0 || y >= height || y < 0 ) { 
             gameOver = true;
             return; // Exit early
         }
