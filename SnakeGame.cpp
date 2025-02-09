@@ -12,6 +12,7 @@ private:
     bool gameOver;
     int width, height;
     int x, y, fruitX, fruitY, score;
+    int highScore;  // Added variable to track the high score
     vector<pair<int, int>> snake;
     enum Direction { STOP = 0, LEFT, RIGHT, UP, DOWN };
     Direction dir, lastDir;
@@ -24,6 +25,7 @@ public:
         height = h;
         hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         hideCursor();
+        highScore = 0;  // Initialize high score to 0
         StartNewGame();
     }
 
@@ -89,7 +91,8 @@ public:
         for (int i = 0; i < width + 2; i++) cout << "#";
         cout << endl;
 
-        cout << "Score: " << score << endl;
+        // Display current score and high score
+        cout << "Score: " << score << "  High Score: " << highScore << endl;
     }
 
     void Input() {
@@ -103,6 +106,7 @@ public:
             }
         }
     }
+
     void Logic() {
         pair<int, int> prev = snake[0], prev2;
         snake[0] = { x, y };
@@ -111,7 +115,7 @@ public:
             snake[i] = prev;
             prev = prev2;
         }
-    
+
         switch (dir) {
             case LEFT: x--; break;
             case RIGHT: x++; break;
@@ -119,31 +123,30 @@ public:
             case DOWN: y++; break;
             default: break;
         }
-    
-        // **Game Over condition: Snake touches any border**
+
+        // *Game Over condition: Snake touches any border*
         if (x >= width || x < 0 || y >= height || y < 0 ) { 
             gameOver = true;
             return; // Exit early
         }
-    
-        // **Game Over condition: Snake touches itself**
+
+        // *Game Over condition: Snake touches itself*
         for (size_t i = 1; i < snake.size(); i++) {
             if (snake[i].first == x && snake[i].second == y) {
                 gameOver = true;
                 return;
             }
         }
-    
+
         // Check if fruit is eaten
         if (x == fruitX && y == fruitY) {
             score += 10;
             spawnFruit();
             snake.push_back({ -1, -1 }); // Add new segment
         }
-    
+
         lastDir = dir; // Prevent instant reversal
     }
-    
 
     void spawnFruit() {
         bool valid;
@@ -171,9 +174,15 @@ public:
     }
 
     void ShowGameOverScreen() {
+        // Update the high score if current score is higher
+        if (score > highScore) {
+            highScore = score;
+        }
+
         gotoXY(0, height + 3);  // Move cursor to avoid overlapping text
         cout << "\033[31mGame Over!\033[0m" << endl;
         cout << "Final Score: " << score << endl;
+        cout << "High Score: " << highScore << endl;
         PlayGameOverSound();
     }
 };
@@ -198,10 +207,11 @@ int main() {
         cin >> choice;
         
         if (choice == 'y' || choice == 'Y') {
-            game.StartNewGame();
-        }
+                game.StartNewGame();
+            }
         else {
             break;
         }
+        
     }
 }
