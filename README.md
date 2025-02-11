@@ -1,74 +1,130 @@
 # Snake Game in C++
 
-This is a simple Snake Game implemented in C++ using the Windows console. The game features a snake that moves around the screen, grows when it eats a fruit, and ends when it collides with itself or the walls. It is a fun and engaging way to practice C++ programming and understand game development fundamentals.
+## Description
+This is a simple console-based Snake Game implemented in C++ using Windows-specific console manipulation functions. The game features:
+- Movement using arrow keys (`←`, `→`, `↑`, `↓`) or `WASD` keys
+- A fruit spawning mechanism that ensures fruits do not appear on the snake's body
+- A real-time display without clearing the console screen
+- A high score tracking system
+- A game-over screen with sound effects
 
 ## Features
-- **Classic Snake Mechanics**: The snake moves in four directions and grows as it eats.
-- **Randomized Fruit Placement**: Fruits appear at random locations on the grid.
-- **Score Tracking**: Keep track of your score as you eat more fruits.
-- **Game Over Conditions**: The game ends when the snake collides with itself or the walls.
-- **Colored Console Output**: The snake and fruit are visually distinct using ANSI escape codes.
-- **Game Restart Option**: Restart the game after losing instead of restarting the application.
-- **Beep Sound for Game Over**: A sound effect plays when the game ends.
+- **Real-time keyboard input detection** using `_kbhit()` and `_getch()`
+- **Dynamic snake growth** when it eats the fruit
+- **Border collision detection** for game over conditions
+- **Self-collision detection**
+- **Game restart option**
+- **Game-over sound effect** using `Beep()`
+- **Cursor movement** using `SetConsoleCursorPosition()`
 
 ## How to Play
-- **Controls:**
-  - `W` - Move Up
-  - `A` - Move Left
-  - `S` - Move Down
-  - `D` - Move Right
-  - `X` - Quit the game
-- The goal is to navigate the snake around the screen and eat the red fruit (`F`) to grow and increase your score.
-- Avoid hitting the walls or yourself, as this will end the game.
-- The game continuously loops until the player chooses to quit.
+1. Run the program.
+2. Use the arrow keys (`←`, `→`, `↑`, `↓`) or `WASD` keys to control the snake's movement.
+3. Eat the fruit (`F`) to grow and increase your score.
+4. Avoid crashing into the walls or yourself.
+5. When the game ends, you will see your final score and high score.
+6. Choose whether to restart (`y/Y`) or exit (`n/N`).
 
-## Requirements
-- **Operating System**: Windows (due to the use of `windows.h` and console manipulation functions)
-- **Compiler**: C++ compiler (such as MinGW g++ or MSVC)
-- **Terminal**: Command Prompt or any compatible terminal that supports ANSI escape codes.
+## Code Breakdown
+### 1. **Class `SnakeGame`**
+This class contains all the game logic and UI rendering.
+
+#### Private Members:
+- `gameOver`: A boolean to track if the game has ended.
+- `width`, `height`: Dimensions of the game board.
+- `x`, `y`: Snake's head position.
+- `fruitX`, `fruitY`: Position of the fruit.
+- `score`, `highScore`: Tracks the score and highest score.
+- `snake`: A vector storing the snake's body coordinates.
+- `Direction`: Enum for snake movement direction.
+- `hConsole`, `cursorPos`: Used for cursor movement in the console.
+
+#### Key Methods:
+- `StartNewGame()`: 
+  - Resets all game-related variables.
+  - Places the snake at the center of the board.
+  - Randomly places the fruit in a valid position.
+  - Initializes the score to zero.
+
+- `hideCursor()`: 
+  - Uses `CONSOLE_CURSOR_INFO` to make the console cursor invisible.
+  - Prevents visual distractions by removing the blinking cursor.
+
+- `gotoXY(int x, int y)`: 
+  - Moves the console cursor to a specific (x, y) coordinate.
+  - Uses `SetConsoleCursorPosition()` to efficiently update screen output without flickering.
+
+- `Draw()`: 
+  - Uses `gotoXY(0,0)` to prevent unnecessary screen clearing.
+  - Draws the game board, snake, and fruit.
+  - Utilizes ANSI escape codes to color the snake and fruit.
+  - Displays the current score and high score.
+
+- `Input()`: 
+  - Uses `_kbhit()` to detect if a key is pressed.
+  - Uses `_getch()` to capture the keypress without requiring Enter.
+  - Updates the snake's direction, preventing instant reversal.
+  - Allows the player to exit by pressing 'X'.
+
+- `Logic()`: 
+  - Moves the snake in the current direction.
+  - Shifts each segment of the snake forward to simulate movement.
+  - Checks for collisions with walls or itself and ends the game if necessary.
+  - Detects if the snake eats the fruit, increasing score and growing the snake.
+  - Calls `spawnFruit()` to generate a new fruit if needed.
+
+- `spawnFruit()`: 
+  - Randomly places a fruit in a location that does not overlap with the snake.
+  - Uses a loop to ensure a valid fruit placement before breaking.
+
+- `isGameOver()`: 
+  - Returns the `gameOver` boolean to indicate whether the game has ended.
+
+- `PlayGameOverSound()`: 
+  - Uses `Beep()` to play a series of tones when the game ends.
+  - Creates an audio cue to enhance user experience.
+
+- `ShowGameOverScreen()`: 
+  - Updates the high score if the current score is greater.
+  - Displays the final score and high score to the player.
+  - Calls `PlayGameOverSound()` to play a sound.
+
+### 2. **Main Function**
+- Initializes `srand(time(0))` for random fruit placement.
+- Creates an instance of `SnakeGame`.
+- Runs the game loop, checking `isGameOver()`.
+- After a game over, prompts the player to restart or exit.
+
+## Dependencies
+This program uses:
+- `<iostream>`: For input and output operations.
+- `<conio.h>`: For `_kbhit()` and `_getch()` functions (Windows-specific).
+- `<windows.h>`: For `Sleep()`, `Beep()`, and console handling.
+- `<vector>`: To store the snake's body.
+- `<cstdlib>`: For `rand()` to generate fruit positions.
+- `<ctime>`: To seed `rand()` with `srand(time(0))`.
 
 ## Compilation and Execution
-To compile the game, use the following command in your terminal:
+### Windows
+1. Open Command Prompt.
+2. Navigate to the directory containing `snake_game.cpp`.
+3. Compile using:
+   ```sh
+   g++ snake_game.cpp -o snake_game.exe
+   ```
+4. Run the game:
+   ```sh
+   snake_game.exe
+   ```
 
-```sh
- g++ snake_game.cpp -o snake_game.exe
-```
+## Potential Enhancements
+- Adding **difficulty levels** (faster snake speed as the score increases).
+- Implementing a **pause feature**.
+- Adding **multiplayer mode**.
 
-Then run the game with:
+## Acknowledgments
+This game is inspired by the classic Snake game and is designed for educational purposes.
 
-```sh
- ./snake_game.exe
-```
+---
+**Enjoy playing Snake! 🐍**
 
-## Code Structure and Explanation
-The game is implemented using a `SnakeGame` class that encapsulates the entire game logic and rendering. Below is an overview of the key components:
-
-### 1. **Class Definition (`SnakeGame`)**
-   - Manages game state variables such as snake position, fruit position, score, and game-over status.
-   - Handles user input, game logic, and rendering.
-
-### 2. **Functions in `SnakeGame` Class**
-   - `SnakeGame(int w, int h)`: Constructor initializes game dimensions and starts a new game.
-   - `StartNewGame()`: Resets game variables to start a fresh game.
-   - `hideCursor()`: Hides the blinking console cursor for a cleaner UI.
-   - `gotoXY(int x, int y)`: Moves the console cursor to a specific position for smooth rendering.
-   - `Draw()`: Renders the game field, snake, and fruit using ASCII characters and ANSI colors.
-   - `Input()`: Captures user keystrokes and updates the snake’s movement direction.
-   - `Logic()`: Updates the snake’s position, checks for collisions, handles fruit consumption, and extends the snake’s body.
-   - `spawnFruit()`: Randomly places a new fruit ensuring it does not spawn inside the snake’s body.
-   - `isGameOver()`: Returns whether the game has ended.
-   - `PlayGameOverSound()`: Plays a beep sound when the game ends.
-   - `ShowGameOverScreen()`: Displays the game-over message and final score as well as the high score.
-
-### 3. **Main Game Loop (`main()`)**
-   - Creates an instance of `SnakeGame`.
-   - Runs a loop to repeatedly call `Draw()`, `Input()`, and `Logic()` until the game ends.
-   - After a game-over event, prompts the user to restart or exit.
-
-## Future Improvements
-- **Increasing Difficulty**: Gradual increase in speed as the score rises.
-- **Pause Functionality**: Ability to pause and resume the game.
-- **Customizable Game Settings**: Change grid size and speed before starting.
-- **Cross-Platform Compatibility**: Replace `windows.h` dependencies for broader support.
-- **Multiplayer Mode**: Introduce a two-player mode for added fun.
-- **Graphical Interface**: Replace console-based rendering with a GUI for better visuals.
